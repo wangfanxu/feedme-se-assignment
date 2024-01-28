@@ -1,17 +1,18 @@
 <template>
   <div class="card">
     <h1>VIP Customer Order</h1>
-    <h2>Total Submitted Orders: {{ totalOrders }}</h2>
+    <h2>Total Orders: {{ vipOrders }}</h2>
     <button @click="submitOrder">Submit VIP Order</button>
   </div>
 </template>
 
 <script setup>
-import { defineEmits } from "vue";
+import { defineEmits, ref } from "vue";
 
 const emit = defineEmits(["submitOrderHandler"]);
-
+const vipOrders = ref(0);
 const submitOrder = async () => {
+  vipOrders.value++;
   // await axios.post('/api/orders', orderData);
 
   //update firestore to increase total order

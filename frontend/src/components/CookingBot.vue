@@ -9,13 +9,15 @@
         <tr>
           <th>ID</th>
           <th>Status</th>
-          <th>task</th>
+          <th>task id</th>
+          <th>task type</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(bot, id) in props.bots" :key="id">
           <td>{{ id }}</td>
           <td>{{ bot.status }}</td>
+          <td>{{ bot.taskId }}</td>
           <td>{{ bot.taskType }}</td>
         </tr>
       </tbody>
@@ -33,24 +35,18 @@ const props = defineProps({
 
 const emit = defineEmits(["onBotIncrease", "onBotDecrease"]);
 const numberOfBots = ref(0);
+let botId = 0;
 
 const onBotIncrease = async () => {
-  // await axios.post('/api/orders', orderData);
-
-  //update firestore to increase total order
-  //push to submitOrderHandler to handle to position
   numberOfBots.value += 1;
-  emit("onBotIncrease", numberOfBots.value); // Emit the 'submit' event with the current totalOrders value
+  botId++;
+  emit("onBotIncrease", botId);
 };
 
 const onBotDecrease = async () => {
-  // await axios.post('/api/orders', orderData);
-
-  //update firestore to increase total order
-  //push to submitOrderHandler to handle to position
   if (numberOfBots.value <= 0) return;
   numberOfBots.value -= 1;
-  emit("onBotDecrease", numberOfBots.value); // Emit the 'submit' event with the current totalOrders value
+  emit("onBotDecrease", botId); // Emit the 'submit' event with the current totalOrders value
 };
 </script>
 

@@ -1,16 +1,21 @@
 <template>
   <div class="card">
     <h1>Normal Customer Order</h1>
+    <h2>Number of orders: {{ orders }}</h2>
+
     <button @click="submitOrder">Submit Order</button>
   </div>
 </template>
 
 <script setup>
-import { defineEmits } from "vue";
+import { defineEmits, ref } from "vue";
 
 const emit = defineEmits(["submitOrderHandler"]);
 
+const orders = ref(0);
+
 const submitOrder = async () => {
+  orders.value += 1;
   // await axios.post('/api/orders', orderData);
 
   //update firestore to increase total order

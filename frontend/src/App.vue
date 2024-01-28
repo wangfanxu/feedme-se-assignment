@@ -1,11 +1,14 @@
 <template>
   <div id="app">
+    <h1>Total order: {{ totalOrderNumber }}</h1>
+    <h1>Order Queue :{{ pendingTaskQueue }}</h1>
     <div class="flex-container">
       <NormalOrder @submitOrderHandler="submitOrderHandler" />
       <VIPOrder @submitOrderHandler="submitOrderHandler" />
-      <WorkingArea
-        :pendingTasks="pendingTasks"
+      <PendingTask :pendingTasks="pendingTaskQueue" />
+      <CompleteTask
         :completedTasks="completedTasks"
+        :numberOfCompletedTask="numberOfCompletedTask"
       />
     </div>
     <br />
@@ -23,14 +26,17 @@
 import NormalOrder from "./components/NormalOrder.vue";
 import VIPOrder from "./components/VIPOrder.vue";
 import CookingBot from "./components/CookingBot.vue";
-import WorkingArea from "./components/WorkingArea.vue";
-import { ref, computed, reactive } from "vue";
+import PendingTask from "./components/PendingTask.vue";
+import CompleteTask from "./components/CompleteTask.vue";
+import { ref, reactive } from "vue";
 
 // const executingTaskQueue = ref([]);
 const pendingTaskQueue = ref([]);
-
-const pendingTasks = computed(() => pendingTaskQueue.value.length);
-const completedTasks = ref(0);
+const totalOrderNumber = ref(0);
+let taskId = 0;
+// const pendingTasks = computed(() => pendingTaskQueue.value.length);
+const completedTasks = ref([]);
+const numberOfCompletedTask = ref(0);
 const taskType = {
   normalTask: "normal",
   vipTask: "vip",
@@ -41,12 +47,10 @@ const onBotIncrease = (id) => {
   bots[id] = {
     status: "idle",
   };
-  console.log(bots);
   //check any pending task
   if (!pendingTaskQueue.value.length) return;
 
   //have pending task, execute it
-  console.log("start execute task");
   executeOrder(id);
 };
 
@@ -58,8 +62,15 @@ const onBotDecrease = () => {
   if (bot.status === "working") {
     //determine is it vip or normal order
     if (bot.taskType === taskType.vipTask)
-      pendingTaskQueue.value.unshift(taskType.vipTask);
-    else pendingTaskQueue.value.push(taskType.normalTask);
+      pendingTaskQueue.value.unshift({
+        taskType: taskType.vipTask,
+        taskId: bot.taskId,
+      });
+    else
+      pendingTaskQueue.value.push({
+        taskType: taskType.normalTask,
+        taskId: bot.taskId,
+      });
   }
 
   // Delete the bot with the maximum key
@@ -69,17 +80,19 @@ const onBotDecrease = () => {
 const executeOrder = (botId) => {
   if (!bots[botId]) return; //case bot no longer exist
   console.log("setting bot", bots[botId]);
-  const taskType = pendingTaskQueue.value.shift();
+  const task = pendingTaskQueue.value.shift();
 
   bots[botId].status = "working";
-  bots[botId].taskType = taskType;
+  bots[botId].taskType = task.taskType;
+  bots[botId].taskId = task.taskId;
   setTimeout(() => {
     if (!bots[botId]) return; //case bot no longer exist
 
     bots[botId].status = "idle";
     bots[botId].taskType = "";
 
-    completedTasks.value += 1;
+    completedTasks.value.push(task);
+    numberOfCompletedTask.value++;
 
     // Check if there are any remaining tasks
     if (pendingTaskQueue.value.length > 0) {
@@ -100,13 +113,20 @@ const executeOrder = (botId) => {
 };
 
 const submitOrderHandler = (normalOrder = true) => {
-  console.log("hello");
+  totalOrderNumber.value += 1;
+  taskId++;
   if (normalOrder) {
     //push into the end of the queue
-    pendingTaskQueue.value.push(taskType.normalTask);
+    pendingTaskQueue.value.push({
+      taskType: taskType.normalTask,
+      taskId: taskId,
+    });
   } else {
     //push into first position
-    pendingTaskQueue.value.unshift(taskType.vipTask);
+    pendingTaskQueue.value.unshift({
+      taskType: taskType.vipTask,
+      taskId: taskId,
+    });
   }
 
   onNewTaskCreated();
