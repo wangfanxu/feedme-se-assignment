@@ -61,11 +61,7 @@ const onBotDecrease = () => {
   const bot = bots[maxKey];
   if (bot.status === "working") {
     //determine is it vip or normal order
-    if (bot.taskType === taskType.vipTask)
-      pendingTaskQueue.value.unshift({
-        taskType: taskType.vipTask,
-        taskId: bot.taskId,
-      });
+    if (bot.taskType === taskType.vipTask) handleVipOrderInsertion(bot.taskId);
     else
       pendingTaskQueue.value.push({
         taskType: taskType.normalTask,
@@ -77,6 +73,28 @@ const onBotDecrease = () => {
   delete bots[maxKey];
 };
 
+const handleVipOrderInsertion = (taskId) => {
+  // Find the index of the last VIP task in the queue
+  const lastVipTaskIndex = pendingTaskQueue.value.reduce(
+    (lastIndex, task, index) =>
+      task.taskType === taskType.vipTask ? index : lastIndex,
+    -1
+  );
+
+  // If there are no VIP tasks in the queue, unshift the new task
+  if (lastVipTaskIndex === -1) {
+    pendingTaskQueue.value.unshift({
+      taskType: taskType.vipTask,
+      taskId: taskId,
+    });
+  } else {
+    // Otherwise, insert the new task after the last VIP task
+    pendingTaskQueue.value.splice(lastVipTaskIndex + 1, 0, {
+      taskType: taskType.vipTask,
+      taskId: taskId,
+    });
+  }
+};
 const executeOrder = (botId) => {
   if (!bots[botId]) return; //case bot no longer exist
   console.log("setting bot", bots[botId]);
@@ -90,6 +108,7 @@ const executeOrder = (botId) => {
 
     bots[botId].status = "idle";
     bots[botId].taskType = "";
+    bots[botId].taskId = "";
 
     completedTasks.value.push(task);
     numberOfCompletedTask.value++;
@@ -122,11 +141,7 @@ const submitOrderHandler = (normalOrder = true) => {
       taskId: taskId,
     });
   } else {
-    //push into first position
-    pendingTaskQueue.value.unshift({
-      taskType: taskType.vipTask,
-      taskId: taskId,
-    });
+    handleVipOrderInsertion(taskId);
   }
 
   onNewTaskCreated();
