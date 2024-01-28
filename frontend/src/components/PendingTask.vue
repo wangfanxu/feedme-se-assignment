@@ -26,16 +26,6 @@ const props = defineProps({
   pendingTasks: Array,
   completedTasks: Number,
 });
-
-console.log("props", props.pendingTasks);
-
-// watch(
-//   () => props.pendingTasks,
-//   (newVal, oldVal) => {
-//     console.log("pendingTasks updated:", newVal);
-//     console.log("old val", oldVal);
-//   }
-// );
 </script>
 
 <style scoped>
