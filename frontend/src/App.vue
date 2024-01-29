@@ -80,7 +80,7 @@ const handleVipOrderInsertion = (taskId) => {
     -1
   );
 
-  // If there are no VIP tasks in the queue, unshift the new task
+  // If there are no VIP tasks in the queue, insert into first position of the array
   if (lastVipTaskIndex === -1) {
     pendingTaskQueue.value.unshift({
       taskType: taskType.vipTask,
