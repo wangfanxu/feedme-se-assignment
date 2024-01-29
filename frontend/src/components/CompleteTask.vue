@@ -6,7 +6,7 @@
       <thead>
         <tr>
           <th>Order ID</th>
-          <th>Task Type</th>
+          <th>Order Type</th>
         </tr>
       </thead>
       <tbody>
