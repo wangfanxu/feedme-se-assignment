@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <h1>Total order: {{ totalOrderNumber }}</h1>
-    <h1>Order Queue :{{ pendingTaskQueue }}</h1>
     <div class="flex-container">
       <NormalOrder @submitOrderHandler="submitOrderHandler" />
       <VIPOrder @submitOrderHandler="submitOrderHandler" />
@@ -30,13 +29,13 @@ import PendingTask from "./components/PendingTask.vue";
 import CompleteTask from "./components/CompleteTask.vue";
 import { ref, reactive } from "vue";
 
-// const executingTaskQueue = ref([]);
 const pendingTaskQueue = ref([]);
-const totalOrderNumber = ref(0);
-let taskId = 0;
-// const pendingTasks = computed(() => pendingTaskQueue.value.length);
 const completedTasks = ref([]);
+const totalOrderNumber = ref(0);
 const numberOfCompletedTask = ref(0);
+
+let taskId = 0;
+
 const taskType = {
   normalTask: "normal",
   vipTask: "vip",
@@ -97,7 +96,6 @@ const handleVipOrderInsertion = (taskId) => {
 };
 const executeOrder = (botId) => {
   if (!bots[botId]) return; //case bot no longer exist
-  console.log("setting bot", bots[botId]);
   const task = pendingTaskQueue.value.shift();
 
   bots[botId].status = "working";
@@ -154,15 +152,8 @@ const onNewTaskCreated = () => {
   if (!idleBotEntry) return;
 
   const [idleBotId, idleBot] = idleBotEntry;
-  console.log("Idle bot ID:", idleBotId);
-  console.log("Idle bot:", idleBot);
   executeOrder(idleBotId);
 };
-
-// const onNewTaskExecuting = () => {
-//   //set up scheduler for 10s, once done process remove the first element from executingTaskQueue
-//   //then update the completed task
-// };
 </script>
 
 <style>

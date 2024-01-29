@@ -5,7 +5,7 @@
     <table class="styled-table">
       <thead>
         <tr>
-          <th>Task ID</th>
+          <th>Order ID</th>
           <th>Task Type</th>
         </tr>
       </thead>

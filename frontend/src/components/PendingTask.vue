@@ -5,8 +5,8 @@
     <table class="styled-table">
       <thead>
         <tr>
-          <th>Task ID</th>
-          <th>Task Type</th>
+          <th>Order ID</th>
+          <th>Order Type</th>
         </tr>
       </thead>
       <tbody>

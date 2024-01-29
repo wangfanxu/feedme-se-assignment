@@ -9,8 +9,8 @@
         <tr>
           <th>ID</th>
           <th>Status</th>
-          <th>task id</th>
-          <th>task type</th>
+          <th>Order ID</th>
+          <th>Order type</th>
         </tr>
       </thead>
       <tbody>
